@@ -68,20 +68,28 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-20px); }
         }
+
+        #linkGif {
+            margin-top: 20px;
+            width: 80%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>Quer namorar comigo?</h1>
+        <input type="text" id="linkGif" placeholder="Cole o link do seu GIF aqui">
         <div class="botoes">
             <button id="sim" onclick="aceitou()">Sim</button>
             <button id="nao">Não</button>
         </div>
     </div>
 
-    <!-- Som engraçado para o botão "Não" -->
-    <audio id="somFuga" src="SOM_DO_BOTAO_AQUI.mp3"></audio> <!-- Coloque o link do som aqui -->
+    <audio id="somFuga" src="SOM_DO_BOTAO_AQUI.mp3"></audio>
 
     <script>
         const naoButton = document.getElementById('nao');
@@ -90,7 +98,7 @@
 
         let botaoJaFugiu = false;
 
-        // Verifica se já clicou em "Sim" antes
+        // Caso já tenha aceitado antes
         if(localStorage.getItem('aceitou') === 'sim'){
             mostrarMensagemFinal();
         }
@@ -103,7 +111,6 @@
 
             const larguraJanela = window.innerWidth;
             const alturaJanela = window.innerHeight;
-
             const larguraBotao = naoButton.offsetWidth;
             const alturaBotao = naoButton.offsetHeight;
 
@@ -113,7 +120,7 @@
             naoButton.style.left = `${novaPosicaoX}px`;
             naoButton.style.top = `${novaPosicaoY}px`;
 
-            somFuga.play(); // toca o som
+            somFuga.play();
         }
 
         naoButton.addEventListener('mouseover', moverBotao);
@@ -123,18 +130,27 @@
         });
 
         function aceitou() {
+            const gifLink = document.getElementById('linkGif').value.trim() || "https://media.tenor.com/vOc-lwf_sr4AAAAM/detective-kiss.gif";
             localStorage.setItem('aceitou', 'sim');
+            localStorage.setItem('gifLink', gifLink);
             mostrarMensagemFinal();
         }
 
         function mostrarMensagemFinal() {
             const container = document.querySelector('.container');
+            const gifLink = localStorage.getItem('gifLink') || "https://media.tenor.com/vOc-lwf_sr4AAAAM/detective-kiss.gif";
+
             container.innerHTML = `
                 <h1 style="font-size: 2.5em; margin-bottom: 0;">EU SABIAAA! Te amo, meu amor! ❤️</h1>
                 <div style="font-size:3em; animation:bounce 1s infinite;">💖</div>
-                <img src="https://media.tenor.com/vOc-lwf_sr4AAAAM/detective-kiss.gif" alt="GIF fofo" style="margin-top:20px; max-width:90%; border-radius:10px;">
+                <img src="${gifLink}" alt="GIF fofo" style="margin-top:20px; max-width:90%; border-radius:10px;">
             `;
             document.body.style.backgroundColor = '#e1ffc7';
+
+            // Remove o botão "Não" do body se ainda estiver lá
+            if (document.body.contains(naoButton)) {
+                naoButton.remove();
+            }
         }
     </script>
 
