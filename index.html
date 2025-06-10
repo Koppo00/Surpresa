@@ -5,27 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Um Pedido Especial</title>
     <style>
-        /* Estilos gerais da página */
         body {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #fce4ec; /* Um rosa bem clarinho */
+            background-color: #fce4ec;
             font-family: 'Arial', sans-serif;
-            overflow: hidden; /* Evita barras de rolagem quando o botão foge */
+            overflow: hidden;
         }
 
-        /* Container principal */
         .container {
             text-align: center;
             background-color: white;
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            /* Garante que o container não seja maior que a tela em dispositivos pequenos */
-            max-width: 90%; 
+            max-width: 90%;
         }
 
         h1 {
@@ -33,15 +30,12 @@
             font-size: 1.8em;
         }
 
-        /* Container dos botões */
         .botoes {
             margin-top: 30px;
-            /* Garante que o botão 'Não' tenha um contexto de posicionamento inicial */
-            position: relative; 
-            height: 50px; /* Altura para dar espaço inicial ao botão 'Não' */
+            position: relative;
+            height: 50px;
         }
 
-        /* Estilo dos botões */
         button {
             padding: 15px 30px;
             border: none;
@@ -50,12 +44,11 @@
             color: white;
             cursor: pointer;
             transition: transform 0.2s ease, background-color 0.2s ease;
-            -webkit-tap-highlight-color: transparent; /* Remove o brilho azul ao tocar no celular */
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* Botão SIM */
         #sim {
-            background-color: #4CAF50; /* Verde */
+            background-color: #4CAF50;
             margin-right: 20px;
         }
 
@@ -64,13 +57,16 @@
             transform: scale(1.1);
         }
 
-        /* Botão NÃO (o fujão) */
         #nao {
-            background-color: #f44336; /* Vermelho */
-            position: absolute; /* ESSENCIAL para que ele possa se mover livremente */
-            /* Posição inicial relativa ao container de botões */
+            background-color: #f44336;
+            position: absolute;
             top: 0;
-            transition: top 0.3s ease, left 0.3s ease; /* Animação suave */
+            transition: top 0.3s ease, left 0.3s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
         }
     </style>
 </head>
@@ -84,19 +80,23 @@
         </div>
     </div>
 
+    <!-- Som engraçado para o botão "Não" -->
+    <audio id="somFuga" src="SOM_DO_BOTAO_AQUI.mp3"></audio> <!-- Coloque o link do som aqui -->
+
     <script>
         const naoButton = document.getElementById('nao');
         const body = document.body;
+        const somFuga = document.getElementById('somFuga');
 
-        // NOVO: Uma variável para saber se o botão já foi movido para o body
         let botaoJaFugiu = false;
 
+        // Verifica se já clicou em "Sim" antes
+        if(localStorage.getItem('aceitou') === 'sim'){
+            mostrarMensagemFinal();
+        }
+
         function moverBotao() {
-            // NOVO: Lógica para mover o botão para o <body> na primeira fuga
-            // Isso garante que a 'position: absolute' funcione em relação à tela inteira
             if (!botaoJaFugiu) {
-                // Move o botão para ser um filho direto do body.
-                // Isso o "liberta" do .container
                 body.appendChild(naoButton);
                 botaoJaFugiu = true;
             }
@@ -107,27 +107,33 @@
             const larguraBotao = naoButton.offsetWidth;
             const alturaBotao = naoButton.offsetHeight;
 
-            const novaPosicaoX = Math.floor(Math.random() * (larguraJanela - larguraBotao));
-            const novaPosicaoY = Math.floor(Math.random() * (alturaJanela - alturaBotao));
+            const novaPosicaoX = Math.max(0, Math.min(Math.random() * (larguraJanela - larguraBotao), larguraJanela - larguraBotao));
+            const novaPosicaoY = Math.max(0, Math.min(Math.random() * (alturaJanela - alturaBotao), alturaJanela - alturaBotao));
 
             naoButton.style.left = `${novaPosicaoX}px`;
             naoButton.style.top = `${novaPosicaoY}px`;
+
+            somFuga.play(); // toca o som
         }
 
-        // Adiciona os "ouvintes de evento"
         naoButton.addEventListener('mouseover', moverBotao);
         naoButton.addEventListener('touchstart', (e) => {
-            // Previne o comportamento padrão do toque (como zoom ou rolagem)
-            e.preventDefault(); 
+            e.preventDefault();
             moverBotao();
         });
 
-        // Função que é chamada quando o botão "Sim" é clicado
         function aceitou() {
+            localStorage.setItem('aceitou', 'sim');
+            mostrarMensagemFinal();
+        }
+
+        function mostrarMensagemFinal() {
             const container = document.querySelector('.container');
-            
-            container.innerHTML = '<h1 style="font-size: 2.5em; margin-bottom: 0;">EU SABIAAA! Te amo, meu amor! ❤️</h1>';
-            
+            container.innerHTML = `
+                <h1 style="font-size: 2.5em; margin-bottom: 0;">EU SABIAAA! Te amo, meu amor! ❤️</h1>
+                <div style="font-size:3em; animation:bounce 1s infinite;">💖</div>
+                <img src="LINK_DO_SEU_GIF_AQUI.gif" alt="GIF fofo" style="margin-top:20px; max-width:90%; border-radius:10px;">
+            `;
             document.body.style.backgroundColor = '#e1ffc7';
         }
     </script>
