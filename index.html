@@ -92,15 +92,17 @@
     <audio id="somFuga" src="SOM_DO_BOTAO_AQUI.mp3"></audio>
 
     <script>
+        
         const naoButton = document.getElementById('nao');
         const body = document.body;
         const somFuga = document.getElementById('somFuga');
 
         let botaoJaFugiu = false;
 
-        // Caso já tenha aceitado antes
-        if(localStorage.getItem('aceitou') === 'sim'){
-            mostrarMensagemFinal();
+       // Apenas para testes: não carregar automaticamente a mensagem final
+localStorage.removeItem('aceitou');
+localStorage.removeItem('gifLink');
+
         }
 
         function moverBotao() {
