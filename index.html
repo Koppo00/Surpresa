@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Um Pedido Especial</title>
+    <style>
+        /* Estilos gerais da página */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #fce4ec; /* Um rosa bem clarinho */
+            font-family: 'Arial', sans-serif;
+            overflow: hidden; /* Evita barras de rolagem quando o botão foge */
+        }
+
+        /* Container principal */
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            color: #333;
+            font-size: 1.8em;
+        }
+
+        /* Container dos botões */
+        .botoes {
+            margin-top: 30px;
+        }
+
+        /* Estilo dos botões */
+        button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        /* Botão SIM */
+        #sim {
+            background-color: #4CAF50; /* Verde */
+            margin-right: 20px;
+        }
+
+        #sim:hover {
+            background-color: #45a049;
+            transform: scale(1.1);
+        }
+
+        /* Botão NÃO (o fujão) */
+        #nao {
+            background-color: #f44336; /* Vermelho */
+            position: absolute; /* ESSENCIAL para que ele possa se mover livremente */
+            transition: top 0.3s ease, left 0.3s ease; /* Animação suave */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Quer namorar comigo?</h1>
+        <div class="botoes">
+            <button id="sim" onclick="aceitou()">Sim</button>
+            <button id="nao">Não</button>
+        </div>
+    </div>
+
+    <script>
+        // Pega o elemento do botão "Não"
+        const naoButton = document.getElementById('nao');
+
+        // Adiciona um "ouvinte de evento" para o mouse passar por cima
+        naoButton.addEventListener('mouseover', () => {
+            // Pega o tamanho da janela do navegador
+            const larguraJanela = window.innerWidth;
+            const alturaJanela = window.innerHeight;
+
+            // Pega o tamanho do botão
+            const larguraBotao = naoButton.offsetWidth;
+            const alturaBotao = naoButton.offsetHeight;
+
+            // Calcula uma posição aleatória para o botão
+            // Garantindo que ele não saia da tela
+            const novaPosicaoX = Math.floor(Math.random() * (larguraJanela - larguraBotao));
+            const novaPosicaoY = Math.floor(Math.random() * (alturaJanela - alturaBotao));
+
+            // Aplica a nova posição ao botão
+            naoButton.style.left = `${novaPosicaoX}px`;
+            naoButton.style.top = `${novaPosicaoY}px`;
+        });
+
+        // Função que é chamada quando o botão "Sim" é clicado
+        function aceitou() {
+            // Pega o container principal
+            const container = document.querySelector('.container');
+            
+            // Muda a mensagem e remove os botões
+            container.innerHTML = '<h1>Eu sabia! Te amo! ❤️</h1>';
+        }
+    </script>
+
+</body>
+</html>
