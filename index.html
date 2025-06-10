@@ -24,6 +24,8 @@
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            /* Garante que o container não seja maior que a tela em dispositivos pequenos */
+            max-width: 90%; 
         }
 
         h1 {
@@ -34,6 +36,9 @@
         /* Container dos botões */
         .botoes {
             margin-top: 30px;
+            /* Garante que o botão 'Não' tenha um contexto de posicionamento */
+            position: relative; 
+            height: 50px; /* Altura para dar espaço inicial ao botão 'Não' */
         }
 
         /* Estilo dos botões */
@@ -62,6 +67,8 @@
         #nao {
             background-color: #f44336; /* Vermelho */
             position: absolute; /* ESSENCIAL para que ele possa se mover livremente */
+            /* Posição inicial relativa ao container de botões */
+            top: 0;
             transition: top 0.3s ease, left 0.3s ease; /* Animação suave */
         }
     </style>
@@ -77,11 +84,10 @@
     </div>
 
     <script>
-        // Pega o elemento do botão "Não"
         const naoButton = document.getElementById('nao');
 
-        // Adiciona um "ouvinte de evento" para o mouse passar por cima
-        naoButton.addEventListener('mouseover', () => {
+        // Função para mover o botão
+        function moverBotao() {
             // Pega o tamanho da janela do navegador
             const larguraJanela = window.innerWidth;
             const alturaJanela = window.innerHeight;
@@ -98,15 +104,25 @@
             // Aplica a nova posição ao botão
             naoButton.style.left = `${novaPosicaoX}px`;
             naoButton.style.top = `${novaPosicaoY}px`;
-        });
+        }
+
+        // Adiciona os "ouvintes de evento"
+        // Para desktops (passar o mouse)
+        naoButton.addEventListener('mouseover', moverBotao);
+        
+        // Para celulares (tocar na tela)
+        naoButton.addEventListener('touchstart', moverBotao);
 
         // Função que é chamada quando o botão "Sim" é clicado
         function aceitou() {
             // Pega o container principal
             const container = document.querySelector('.container');
             
-            // Muda a mensagem e remove os botões
-            container.innerHTML = '<h1>Eu sabia! Te amo! ❤️</h1>';
+            // Muda a mensagem, aumenta o tamanho da fonte e remove a margem inferior
+            container.innerHTML = '<h1 style="font-size: 2.5em; margin-bottom: 0;">EU SABIAAA! Te amo, meu amor! ❤️</h1>';
+            
+            // Opcional: Mudar a cor de fundo para comemorar
+            document.body.style.backgroundColor = '#e1ffc7'; // Um verde bem clarinho
         }
     </script>
 
