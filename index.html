@@ -36,7 +36,7 @@
         /* Container dos botões */
         .botoes {
             margin-top: 30px;
-            /* Garante que o botão 'Não' tenha um contexto de posicionamento */
+            /* Garante que o botão 'Não' tenha um contexto de posicionamento inicial */
             position: relative; 
             height: 50px; /* Altura para dar espaço inicial ao botão 'Não' */
         }
@@ -50,6 +50,7 @@
             color: white;
             cursor: pointer;
             transition: transform 0.2s ease, background-color 0.2s ease;
+            -webkit-tap-highlight-color: transparent; /* Remove o brilho azul ao tocar no celular */
         }
 
         /* Botão SIM */
@@ -85,44 +86,49 @@
 
     <script>
         const naoButton = document.getElementById('nao');
+        const body = document.body;
 
-        // Função para mover o botão
+        // NOVO: Uma variável para saber se o botão já foi movido para o body
+        let botaoJaFugiu = false;
+
         function moverBotao() {
-            // Pega o tamanho da janela do navegador
+            // NOVO: Lógica para mover o botão para o <body> na primeira fuga
+            // Isso garante que a 'position: absolute' funcione em relação à tela inteira
+            if (!botaoJaFugiu) {
+                // Move o botão para ser um filho direto do body.
+                // Isso o "liberta" do .container
+                body.appendChild(naoButton);
+                botaoJaFugiu = true;
+            }
+
             const larguraJanela = window.innerWidth;
             const alturaJanela = window.innerHeight;
 
-            // Pega o tamanho do botão
             const larguraBotao = naoButton.offsetWidth;
             const alturaBotao = naoButton.offsetHeight;
 
-            // Calcula uma posição aleatória para o botão
-            // Garantindo que ele não saia da tela
             const novaPosicaoX = Math.floor(Math.random() * (larguraJanela - larguraBotao));
             const novaPosicaoY = Math.floor(Math.random() * (alturaJanela - alturaBotao));
 
-            // Aplica a nova posição ao botão
             naoButton.style.left = `${novaPosicaoX}px`;
             naoButton.style.top = `${novaPosicaoY}px`;
         }
 
         // Adiciona os "ouvintes de evento"
-        // Para desktops (passar o mouse)
         naoButton.addEventListener('mouseover', moverBotao);
-        
-        // Para celulares (tocar na tela)
-        naoButton.addEventListener('touchstart', moverBotao);
+        naoButton.addEventListener('touchstart', (e) => {
+            // Previne o comportamento padrão do toque (como zoom ou rolagem)
+            e.preventDefault(); 
+            moverBotao();
+        });
 
         // Função que é chamada quando o botão "Sim" é clicado
         function aceitou() {
-            // Pega o container principal
             const container = document.querySelector('.container');
             
-            // Muda a mensagem, aumenta o tamanho da fonte e remove a margem inferior
             container.innerHTML = '<h1 style="font-size: 2.5em; margin-bottom: 0;">EU SABIAAA! Te amo, meu amor! ❤️</h1>';
             
-            // Opcional: Mudar a cor de fundo para comemorar
-            document.body.style.backgroundColor = '#e1ffc7'; // Um verde bem clarinho
+            document.body.style.backgroundColor = '#e1ffc7';
         }
     </script>
 
