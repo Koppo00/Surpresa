@@ -49,8 +49,8 @@
         }
 
         .botoes {
-            display: flex; /* Alinha os botões lado a lado */
-            justify-content: center; /* Centraliza os botões */
+            display: flex;
+            justify-content: center;
             align-items: center;
             gap: 20px; /* Espaço entre os botões */
             height: 50px;
@@ -61,11 +61,11 @@
             border: none;
             border-radius: 12px;
             font-size: 1.2em;
-            font-weight: 700; /* Deixa a fonte do botão mais forte */
+            font-weight: 700;
             color: white;
             cursor: pointer;
             transition: transform 0.2s ease, background-color 0.2s ease;
-            -webkit-tap-highlight-color: transparent; /* Remove o brilho ao tocar no celular */
+            -webkit-tap-highlight-color: transparent;
         }
 
         #sim {
@@ -80,7 +80,7 @@
 
         #nao {
             background-color: var(--button-nao);
-            position: absolute; /* Mantém a habilidade de fugir */
+            position: absolute;
             transition: top 0.3s ease, left 0.3s ease;
         }
 
@@ -125,7 +125,6 @@
         </div>
     </div>
 
-    <!-- O áudio só funciona se o navegador permitir autoplay, o que nem sempre acontece -->
     <audio id="somFuga" src="https://www.myinstants.com/media/sounds/nope.mp3" preload="auto"></audio>
 
     <script>
@@ -138,47 +137,64 @@
         let botaoJaFugiu = false;
 
         function moverBotao() {
-            // **CORREÇÃO IMPORTANTE PARA CELULAR**
-            // Move o botão para o <body> na primeira vez para garantir que ele possa
-            // se mover livremente pela tela inteira sem parar.
             if (!botaoJaFugiu) {
                 body.appendChild(naoButton);
                 botaoJaFugiu = true;
             }
 
-            const larguraJanela = window.innerWidth;
-            const alturaJanela = window.innerHeight;
+            // --- NOVA LÓGICA DE POSICIONAMENTO ---
 
-            const larguraBotao = naoButton.offsetWidth;
-            const alturaBotao = naoButton.offsetHeight;
+            // 1. Pega as dimensões e posição do container principal
+            const containerRect = container.getBoundingClientRect();
+            const botaoLargura = naoButton.offsetWidth;
+            const botaoAltura = naoButton.offsetHeight;
 
-            const novaPosicaoX = Math.floor(Math.random() * (larguraJanela - larguraBotao));
-            const novaPosicaoY = Math.floor(Math.random() * (alturaJanela - alturaBotao));
+            // 2. Define o quão longe o botão pode ir (a "área de fuga")
+            // Aumenta a área do container em 100px para cada lado
+            const areaDeFuga = {
+                minX: containerRect.left - 100,
+                maxX: containerRect.right + 100,
+                minY: containerRect.top - 100,
+                maxY: containerRect.bottom + 100
+            };
 
-            naoButton.style.position = 'absolute'; // Garante que a posição seja absoluta
+            // 3. Garante que a área de fuga não saia da tela
+            const limiteTela = {
+                minX: 0,
+                maxX: window.innerWidth - botaoLargura,
+                minY: 0,
+                maxY: window.innerHeight - botaoAltura
+            };
+            
+            const areaFinal = {
+                minX: Math.max(areaDeFuga.minX, limiteTela.minX),
+                maxX: Math.min(areaDeFuga.maxX, limiteTela.maxX),
+                minY: Math.max(areaDeFuga.minY, limiteTela.minY),
+                maxY: Math.min(areaDeFuga.maxY, limiteTela.maxY)
+            };
+
+            // 4. Calcula uma posição aleatória DENTRO da área final
+            const novaPosicaoX = Math.random() * (areaFinal.maxX - areaFinal.minX) + areaFinal.minX;
+            const novaPosicaoY = Math.random() * (areaFinal.maxY - areaFinal.minY) + areaFinal.minY;
+
+            // Aplica a nova posição
+            naoButton.style.position = 'absolute';
             naoButton.style.left = `${novaPosicaoX}px`;
             naoButton.style.top = `${novaPosicaoY}px`;
 
-            // Tenta tocar o som (pode ser bloqueado pelo navegador)
-            somFuga.play().catch(error => console.log("Autoplay do áudio foi bloqueado pelo navegador."));
+            somFuga.play().catch(error => console.log("Autoplay do áudio foi bloqueado."));
         }
 
-        // Adiciona os eventos para o botão "Não"
         naoButton.addEventListener('mouseover', moverBotao);
         naoButton.addEventListener('touchstart', (e) => {
             e.preventDefault();
             moverBotao();
         });
         
-        // Adiciona o evento para o botão "Sim"
         simButton.addEventListener('click', () => {
-            // **CORREÇÃO: REMOVE O BOTÃO "NÃO" DA TELA**
             naoButton.remove();
+            body.style.backgroundColor = '#a3c4f3';
 
-            // Muda a cor de fundo do corpo da página
-            body.style.backgroundColor = '#a3c4f3'; // Azul do Cinnamoroll
-
-            // Altera o conteúdo do container para a tela de sucesso
             container.innerHTML = `
                 <div class="container-final">
                     <h1>Oba! Agora somos um parzinho! 🩵</h1>
