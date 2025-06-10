@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Um Pedido Especial</title>
+    <title>Pedido Especial</title>
     <style>
         body {
             display: flex;
@@ -22,7 +22,6 @@
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            max-width: 90%;
         }
 
         h1 {
@@ -44,7 +43,6 @@
             color: white;
             cursor: pointer;
             transition: transform 0.2s ease, background-color 0.2s ease;
-            -webkit-tap-highlight-color: transparent;
         }
 
         #sim {
@@ -61,6 +59,7 @@
             background-color: #f44336;
             position: absolute;
             top: 0;
+            left: 0;
             transition: top 0.3s ease, left 0.3s ease;
         }
 
@@ -80,23 +79,13 @@
         </div>
     </div>
 
-    <!-- Som engraçado para o botão "Não" -->
-    <audio id="somFuga" src="SEU_LINK_DE_AUDIO_AQUI.mp3"></audio> <!-- Coloque o link do som aqui -->
+    <audio id="somFuga" src="https://www.myinstants.com/media/sounds/nope.mp3"></audio> <!-- som exemplo -->
 
     <script>
         const naoButton = document.getElementById('nao');
-        const simButton = document.getElementById('sim');
-        const body = document.body;
         const somFuga = document.getElementById('somFuga');
 
-        let botaoJaFugiu = false;
-
         function moverBotao() {
-            if (!botaoJaFugiu) {
-                body.appendChild(naoButton);
-                botaoJaFugiu = true;
-            }
-
             const larguraJanela = window.innerWidth;
             const alturaJanela = window.innerHeight;
 
@@ -106,8 +95,8 @@
             const novaPosicaoX = Math.random() * (larguraJanela - larguraBotao);
             const novaPosicaoY = Math.random() * (alturaJanela - alturaBotao);
 
-            naoButton.style.left = `${novaPosicaoX}px`;
-            naoButton.style.top = `${novaPosicaoY}px`;
+            naoButton.style.left = novaPosicaoX + 'px';
+            naoButton.style.top = novaPosicaoY + 'px';
 
             somFuga.play();
         }
@@ -121,9 +110,9 @@
         function aceitou() {
             const container = document.getElementById('container');
             container.innerHTML = `
-                <h1 style="font-size: 2.5em; margin-bottom: 0;">EU SABIAAA! Te amo, meu amor! ❤️</h1>
+                <h1 style="font-size: 2.5em;">EU SABIAAA! Te amo, meu amor! ❤️</h1>
                 <div style="font-size:3em; animation:bounce 1s infinite;">💖</div>
-                <img src="SEU_LINK_DO_GIF_AQUI.gif" alt="GIF fofo" style="margin-top:20px; max-width:90%; border-radius:10px;">
+                <img src="https://media.tenor.com/vOc-lwf_sr4AAAAM/detective-kiss.gif" alt="GIF fofo" style="margin-top:20px; max-width:90%; border-radius:10px;">
             `;
             document.body.style.backgroundColor = '#e1ffc7';
         }
