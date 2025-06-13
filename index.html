@@ -5,20 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Um Pedido Cinnamoroll</title>
     
-    <!-- Adicionando uma fonte fofa do Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* Paleta de Cores Cinnamoroll */
         :root {
-            --background: #d6eaff; /* Azul céu bem clarinho */
+            --background: #d6eaff; 
             --container-bg: #ffffff;
-            --text-color: #5b7a9b; /* Azul acinzentado */
-            --button-sim: #ffc2e2; /* Rosa clarinho */
+            --text-color: #5b7a9b; 
+            --button-sim: #ffc2e2; 
             --button-sim-hover: #fca9d5;
-            --button-nao: #a3c4f3; /* Azul médio */
+            --button-nao: #a3c4f3;
         }
         
         body {
@@ -28,11 +26,15 @@
             height: 100vh;
             margin: 0;
             background-color: var(--background);
-            font-family: 'Nunito', sans-serif; /* Usando a nova fonte */
-            overflow: hidden;
+            font-family: 'Nunito', sans-serif;
+            overflow: hidden; /* Evita barras de rolagem quando o botão foge */
         }
 
         .container {
+            /* Usamos flexbox para alinhar tudo perfeitamente */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             text-align: center;
             background-color: var(--container-bg);
             padding: 40px;
@@ -41,19 +43,27 @@
             max-width: 90%;
             transition: all 0.5s ease-in-out;
         }
+        
+        .gif-pergunta {
+            max-width: 150px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
 
         h1 {
             color: var(--text-color);
             font-size: 1.8em;
-            margin-bottom: 30px; /* Mais espaço */
+            margin-top: 0;
+            margin-bottom: 30px;
         }
 
+        /* Container dos botões para garantir que fiquem lado a lado */
         .botoes {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 20px; /* Espaço entre os botões */
-            height: 50px;
+            width: 100%;
         }
 
         button {
@@ -71,6 +81,7 @@
         #sim {
             background-color: var(--button-sim);
             color: var(--text-color);
+            order: 1; /* Garante a ordem se necessário */
         }
 
         #sim:hover {
@@ -80,26 +91,20 @@
 
         #nao {
             background-color: var(--button-nao);
-            position: absolute;
+            order: 2; /* Garante a ordem se necessário */
+            /* A mágica acontece no JS: position:absolute é adicionado só no primeiro toque/hover */
             transition: top 0.3s ease, left 0.3s ease;
         }
-
-        /* Estilos para a tela de sucesso */
+        
+        /* Estilos para a tela final de sucesso */
         .container-final {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        .container-final h1 {
-            font-size: 2.2em;
-        }
-
-        .gif-final {
-            margin-top: 20px;
-            max-width: 90%;
-            border-radius: 15px;
-        }
+        .container-final h1 { font-size: 2.2em; }
+        .gif-final { margin-top: 20px; max-width: 90%; border-radius: 15px; }
 
         @keyframes heart-pulse {
             0% { transform: scale(1); }
@@ -118,88 +123,72 @@
 <body>
 
     <div class="container" id="container">
-        <h1>Quer ser meu parzinho pra sempre?</h1>
+        <!-- GIF do Cinnamoroll adicionado aqui -->
+        <img src="https://media.tenor.com/P5EJALTMklMAAAAj/cinnamoroll.gif" alt="Cinnamoroll piscando" class="gif-pergunta">
+        
+        <h1>Quer ser meu parzinho?</h1>
+        
         <div class="botoes">
             <button id="sim">Sim!</button>
             <button id="nao">Não</button>
         </div>
     </div>
 
-    <audio id="somFuga" src="https://www.myinstants.com/media/sounds/nope.mp3" preload="auto"></audio>
-
     <script>
         const simButton = document.getElementById('sim');
         const naoButton = document.getElementById('nao');
         const container = document.getElementById('container');
-        const somFuga = document.getElementById('somFuga');
         const body = document.body;
 
+        // Variável para controlar se o botão já foi movido para o body
         let botaoJaFugiu = false;
 
         function moverBotao() {
+            // Na primeira vez que a função é chamada, o botão "Não"
+            // se torna 'absolute' e é movido para o body, para poder
+            // flutuar livremente pela tela.
             if (!botaoJaFugiu) {
+                naoButton.style.position = 'absolute';
+                // Mover o botão para ser um filho direto do body permite que ele
+                // se posicione em relação à tela inteira, e não só ao container.
                 body.appendChild(naoButton);
                 botaoJaFugiu = true;
             }
 
-            // --- NOVA LÓGICA DE POSICIONAMENTO ---
-
-            // 1. Pega as dimensões e posição do container principal
-            const containerRect = container.getBoundingClientRect();
-            const botaoLargura = naoButton.offsetWidth;
-            const botaoAltura = naoButton.offsetHeight;
-
-            // 2. Define o quão longe o botão pode ir (a "área de fuga")
-            // Aumenta a área do container em 100px para cada lado
-            const areaDeFuga = {
-                minX: containerRect.left - 100,
-                maxX: containerRect.right + 100,
-                minY: containerRect.top - 100,
-                maxY: containerRect.bottom + 100
-            };
-
-            // 3. Garante que a área de fuga não saia da tela
-            const limiteTela = {
-                minX: 0,
-                maxX: window.innerWidth - botaoLargura,
-                minY: 0,
-                maxY: window.innerHeight - botaoAltura
-            };
+            // Define os limites da tela para o botão não sair dela
+            const maxX = window.innerWidth - naoButton.offsetWidth;
+            const maxY = window.innerHeight - naoButton.offsetHeight;
             
-            const areaFinal = {
-                minX: Math.max(areaDeFuga.minX, limiteTela.minX),
-                maxX: Math.min(areaDeFuga.maxX, limiteTela.maxX),
-                minY: Math.max(areaDeFuga.minY, limiteTela.minY),
-                maxY: Math.min(areaDeFuga.maxY, limiteTela.maxY)
-            };
+            // Gera uma posição aleatória dentro dos limites da tela
+            const novaPosicaoX = Math.random() * maxX;
+            const novaPosicaoY = Math.random() * maxY;
 
-            // 4. Calcula uma posição aleatória DENTRO da área final
-            const novaPosicaoX = Math.random() * (areaFinal.maxX - areaFinal.minX) + areaFinal.minX;
-            const novaPosicaoY = Math.random() * (areaFinal.maxY - areaFinal.minY) + areaFinal.minY;
-
-            // Aplica a nova posição
-            naoButton.style.position = 'absolute';
+            // Aplica a nova posição ao botão
             naoButton.style.left = `${novaPosicaoX}px`;
             naoButton.style.top = `${novaPosicaoY}px`;
-
-            somFuga.play().catch(error => console.log("Autoplay do áudio foi bloqueado."));
         }
 
+        // Adiciona os eventos para o botão "Não" fugir
         naoButton.addEventListener('mouseover', moverBotao);
         naoButton.addEventListener('touchstart', (e) => {
-            e.preventDefault();
+            e.preventDefault(); // Impede o "clique fantasma" em dispositivos móveis
             moverBotao();
         });
         
+        // O que acontece quando o "Sim" é clicado
         simButton.addEventListener('click', () => {
+            // Remove o botão "Não" da tela
             naoButton.remove();
+            
+            // Muda a cor de fundo para comemorar
             body.style.backgroundColor = '#a3c4f3';
 
+            // Exibe a mensagem de sucesso com um novo GIF
             container.innerHTML = `
                 <div class="container-final">
-                    <h1>Oba! Agora somos um parzinho! 🩵</h1>
+                    <h1>Oba! Agora somos um parzinho!💖 </h1>
                     <div class="coracao-animado">💖</div>
-                    <img src="https://i.pinimg.com/originals/f3/14/7a/f3147a7413a9689539345a0544f4544a.gif" alt="Cinnamoroll Feliz" class="gif-final">
+                    <img src="https://media.tenor.com/inv_IC0z2rgAAAAj/cinnamoroll.gif" alt="Cinnamoroll Feliz" class="gif-final">
                 </div>
             `;
         });
